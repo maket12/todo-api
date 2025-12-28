@@ -8,7 +8,7 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o todo-server ./cmd/todo/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o todo-api ./cmd/todo/main.go
 
 FROM alpine:latest
 
