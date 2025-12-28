@@ -13,26 +13,26 @@ type TodoHandler struct {
 	log           *slog.Logger
 	createTodoUC  *usecase.CreateTodoUC
 	getTodoUC     *usecase.GetTodoUC
-	getTodoListUC *usecase.GetTodoListUC
 	updateTodoUC  *usecase.UpdateTodoUC
 	deleteTodoUC  *usecase.DeleteTodoUC
+	getTodoListUC *usecase.GetTodoListUC
 }
 
 func NewTodoHandler(
 	log *slog.Logger,
 	createTodoUC *usecase.CreateTodoUC,
 	getTodoUC *usecase.GetTodoUC,
-	getTodoListUC *usecase.GetTodoListUC,
 	updateTodoUC *usecase.UpdateTodoUC,
 	deleteTodoUC *usecase.DeleteTodoUC,
+	getTodoListUC *usecase.GetTodoListUC,
 ) *TodoHandler {
 	return &TodoHandler{
 		log:           log,
 		createTodoUC:  createTodoUC,
 		getTodoUC:     getTodoUC,
-		getTodoListUC: getTodoListUC,
 		updateTodoUC:  updateTodoUC,
 		deleteTodoUC:  deleteTodoUC,
+		getTodoListUC: getTodoListUC,
 	}
 }
 
