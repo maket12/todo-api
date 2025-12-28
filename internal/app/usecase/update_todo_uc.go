@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"todo-api/internal/app/dto"
+	"todo-api/internal/app/mappers"
 	"todo-api/internal/app/uc_errors"
 	"todo-api/internal/domain/port"
 )
@@ -24,32 +25,17 @@ func (uc *UpdateTodoUC) Execute(ctx context.Context, in dto.UpdateTodo) (dto.Upd
 		return dto.UpdateTodoResponse{ID: in.ID}, uc_errors.EmptyTitleError
 	}
 
-	currentTodo, err := uc.Storage.GetTodo(ctx, in.ID)
-	if err != nil {
-		if !errors.Is(err, uc_errors.TodoNotFoundError) {
-			return dto.UpdateTodoResponse{ID: in.ID}, uc_errors.Wrap(uc_errors.GetTodoError, err)
-		}
-		return dto.UpdateTodoResponse{ID: in.ID}, err
-	}
+	todo := mappers.MapTodoDTOToDomainTodo(in.Todo)
 
-	currentTodo.Title = in.Title
-	if in.Description != nil {
-		currentTodo.Description = *in.Description
-	}
-	if in.Completed != nil {
-		currentTodo.Completed = *in.Completed
-	}
-
-	err = uc.Storage.UpdateTodo(ctx, currentTodo)
-	if err != nil {
+	if err := uc.Storage.UpdateTodo(ctx, todo); err != nil {
 		if !errors.Is(err, uc_errors.TodoNotFoundError) {
-			return dto.UpdateTodoResponse{ID: currentTodo.ID}, uc_errors.Wrap(uc_errors.UpdateTodoError, err)
+			return dto.UpdateTodoResponse{ID: todo.ID}, uc_errors.Wrap(uc_errors.UpdateTodoError, err)
 		}
-		return dto.UpdateTodoResponse{ID: currentTodo.ID}, err
+		return dto.UpdateTodoResponse{ID: todo.ID}, err
 	}
 
 	return dto.UpdateTodoResponse{
-		ID:      currentTodo.ID,
+		ID:      todo.ID,
 		Updated: true,
 	}, nil
 }

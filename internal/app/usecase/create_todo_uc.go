@@ -24,7 +24,6 @@ func (uc *CreateTodoUC) Execute(ctx context.Context, in dto.CreateTodo) (dto.Cre
 
 	mappedIn := mappers.MapTodoDTOToDomainTodo(in.Todo)
 	if err := uc.Storage.CreateTodo(ctx, mappedIn); err != nil {
-
 		if !errors.Is(err, uc_errors.TodoAlreadyExistsError) {
 			return dto.CreateTodoResponse{ID: mappedIn.ID}, uc_errors.Wrap(uc_errors.CreateTodoError, err)
 		}

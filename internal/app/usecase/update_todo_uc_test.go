@@ -10,10 +10,6 @@ import (
 	"todo-api/internal/domain/entity"
 )
 
-func vPtr[T any](value T) *T {
-	return &value
-}
-
 func TestUpdateTodoUC(t *testing.T) {
 	store := storage.NewDataStorage()
 	uc := NewUpdateTodoUC(store)
@@ -30,10 +26,12 @@ func TestUpdateTodoUC(t *testing.T) {
 		_ = store.CreateTodo(ctx, testTodo)
 
 		in := dto.UpdateTodo{
-			ID:          fixedID,
-			Title:       "Wash dishes",
-			Description: vPtr("use a washing machine"),
-			Completed:   vPtr(false),
+			Todo: dto.Todo{
+				ID:          fixedID,
+				Title:       "Wash dishes",
+				Description: "use a washing machine",
+				Completed:   false,
+			},
 		}
 		if _, err := uc.Execute(ctx, in); err != nil {
 			t.Fatalf("expected no error, got %v", err)
@@ -45,21 +43,21 @@ func TestUpdateTodoUC(t *testing.T) {
 	})
 
 	t.Run("Error - invalid id", func(t *testing.T) {
-		in := dto.UpdateTodo{ID: 0}
+		in := dto.UpdateTodo{Todo: dto.Todo{ID: 0}}
 		if _, err := uc.Execute(ctx, in); !errors.Is(err, uc_errors.InvalidTodoIDError) {
 			t.Errorf("expected InvalidTodoIDError, got %v", err)
 		}
 	})
 
 	t.Run("Error - empty title", func(t *testing.T) {
-		in := dto.UpdateTodo{ID: 10, Title: ""}
+		in := dto.UpdateTodo{Todo: dto.Todo{ID: 10, Title: ""}}
 		if _, err := uc.Execute(ctx, in); !errors.Is(err, uc_errors.EmptyTitleError) {
 			t.Errorf("expected EmptyTitleError, got %v", err)
 		}
 	})
 
 	t.Run("Error - todo not found", func(t *testing.T) {
-		in := dto.UpdateTodo{ID: 100, Title: "New title"}
+		in := dto.UpdateTodo{Todo: dto.Todo{ID: 100, Title: "New title"}}
 		if _, err := uc.Execute(ctx, in); !errors.Is(err, uc_errors.TodoNotFoundError) {
 			t.Errorf("expected TodoNotFoundError, got %v", err)
 		}
@@ -69,7 +67,7 @@ func TestUpdateTodoUC(t *testing.T) {
 		cancelCtx, cancel := context.WithCancel(context.Background())
 		cancel()
 
-		in := dto.UpdateTodo{ID: 10, Title: "New title"}
+		in := dto.UpdateTodo{Todo: dto.Todo{ID: 10, Title: "New title"}}
 		if _, err := uc.Execute(cancelCtx, in); !errors.Is(err, uc_errors.GetTodoError) && !errors.Is(err, uc_errors.UpdateTodoError) {
 			t.Errorf("expected GetTodoError | UpdateTodoError (canceled context), got %v", err)
 		}

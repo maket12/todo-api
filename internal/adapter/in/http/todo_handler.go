@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
+	"strconv"
 	"todo-api/internal/app/dto"
 	"todo-api/internal/app/usecase"
 )
@@ -64,11 +65,14 @@ func (h *TodoHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *TodoHandler) GetTodo(w http.ResponseWriter, r *http.Request) {
-	var input dto.GetTodo
-	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		http.Error(w, "invalid request body", http.StatusBadRequest)
+	idStr := r.PathValue("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		http.Error(w, "invalid id format", http.StatusBadRequest)
 		return
 	}
+
+	input := dto.GetTodo{ID: id}
 
 	response, err := h.getTodoUC.Execute(r.Context(), input)
 	if err != nil {
@@ -88,10 +92,21 @@ func (h *TodoHandler) GetTodo(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *TodoHandler) GetTodoList(w http.ResponseWriter, r *http.Request) {
-	var input dto.GetTodoList
-	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		http.Error(w, "invalid request body", http.StatusBadRequest)
-		return
+	query := r.URL.Query()
+
+	limitStr := query.Get("limit")
+	offsetStr := query.Get("offset")
+
+	limit, _ := strconv.Atoi(limitStr)
+	if limit == 0 {
+		limit = 10
+	}
+
+	offset, _ := strconv.Atoi(offsetStr)
+
+	input := dto.GetTodoList{
+		Limit:  limit,
+		Offset: offset,
 	}
 
 	response, err := h.getTodoListUC.Execute(r.Context(), input)
@@ -118,6 +133,15 @@ func (h *TodoHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	idStr := r.PathValue("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		http.Error(w, "invalid id format", http.StatusBadRequest)
+		return
+	}
+
+	input.ID = id
+
 	response, err := h.updateTodoUC.Execute(r.Context(), input)
 	if err != nil {
 		status, msg, internalErr := HttpError(err)
@@ -140,11 +164,14 @@ func (h *TodoHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *TodoHandler) DeleteTodo(w http.ResponseWriter, r *http.Request) {
-	var input dto.DeleteTodo
-	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		http.Error(w, "invalid request body", http.StatusBadRequest)
+	idStr := r.PathValue("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		http.Error(w, "invalid id format", http.StatusBadRequest)
 		return
 	}
+
+	var input = dto.DeleteTodo{ID: id}
 
 	response, err := h.deleteTodoUC.Execute(r.Context(), input)
 	if err != nil {
