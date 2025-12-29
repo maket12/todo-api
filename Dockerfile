@@ -16,6 +16,4 @@ WORKDIR /root/
 
 COPY --from=builder /app/todo-api .
 
-ENV HTTP_ADDRESS=:8080
-
 CMD ["./todo-api"]
