@@ -1,15 +1,16 @@
-package storage
+package storage_test
 
 import (
 	"context"
 	"errors"
 	"testing"
+	"todo-api/internal/adapter/out/storage"
 	"todo-api/internal/app/uc_errors"
 	"todo-api/internal/domain/entity"
 )
 
 func TestStorage_CreateTodo(t *testing.T) {
-	s := NewDataStorage()
+	s := storage.NewDataStorage()
 	ctx := context.Background()
 
 	t.Run("Success", func(t *testing.T) {
@@ -61,7 +62,7 @@ func TestStorage_CreateTodo(t *testing.T) {
 }
 
 func TestStorage_GetTodo(t *testing.T) {
-	s := NewDataStorage()
+	s := storage.NewDataStorage()
 	ctx := context.Background()
 
 	t.Run("Success", func(t *testing.T) {
@@ -100,7 +101,7 @@ func TestStorage_GetTodo(t *testing.T) {
 }
 
 func TestStorage_GetList(t *testing.T) {
-	s := NewDataStorage()
+	s := storage.NewDataStorage()
 	t.Run("Success", func(t *testing.T) {
 		ctx := context.Background()
 
@@ -127,7 +128,7 @@ func TestStorage_GetList(t *testing.T) {
 	})
 
 	t.Run("Empty list", func(t *testing.T) {
-		emptyStorage := NewDataStorage()
+		emptyStorage := storage.NewDataStorage()
 		list, err := emptyStorage.GetTodoList(context.Background(), 10, 0)
 		if err != nil {
 			t.Errorf("expected no error, got %v", err)
@@ -154,7 +155,7 @@ func TestStorage_GetList(t *testing.T) {
 }
 
 func TestStorage_UpdateTodo(t *testing.T) {
-	s := NewDataStorage()
+	s := storage.NewDataStorage()
 	ctx := context.Background()
 
 	t.Run("Success", func(t *testing.T) {
@@ -188,7 +189,7 @@ func TestStorage_UpdateTodo(t *testing.T) {
 }
 
 func TestStorage_DeleteTodo(t *testing.T) {
-	s := NewDataStorage()
+	s := storage.NewDataStorage()
 	ctx := context.Background()
 
 	t.Run("Success", func(t *testing.T) {

@@ -1,4 +1,4 @@
-package http
+package http_test
 
 import (
 	"context"
@@ -10,6 +10,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	adapterhttp "todo-api/internal/adapter/in/http"
 	"todo-api/internal/adapter/out/storage"
 	"todo-api/internal/app/dto"
 	"todo-api/internal/app/usecase"
@@ -20,7 +21,7 @@ func TestTH_Create(t *testing.T) {
 	store := storage.NewDataStorage()
 	uc := usecase.NewCreateTodoUC(store)
 	testLogger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
-	handler := NewTodoHandler(
+	handler := adapterhttp.NewTodoHandler(
 		testLogger,
 		uc,
 		nil,
@@ -29,7 +30,7 @@ func TestTH_Create(t *testing.T) {
 		nil,
 	)
 
-	router := NewRouter(handler)
+	router := adapterhttp.NewRouter(handler)
 	mux := router.InitRoutes()
 
 	t.Run("Success", func(t *testing.T) {
@@ -113,8 +114,8 @@ func TestTH_Get(t *testing.T) {
 
 	guc := usecase.NewGetTodoUC(store)
 	testLogger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
-	handler := NewTodoHandler(testLogger, nil, guc, nil, nil, nil)
-	router := NewRouter(handler)
+	handler := adapterhttp.NewTodoHandler(testLogger, nil, guc, nil, nil, nil)
+	router := adapterhttp.NewRouter(handler)
 	mux := router.InitRoutes()
 
 	t.Run("Success", func(t *testing.T) {
@@ -187,8 +188,8 @@ func TestTH_GetList(t *testing.T) {
 
 	gluc := usecase.NewGetTodoListUC(store)
 	testLogger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
-	handler := NewTodoHandler(testLogger, nil, nil, gluc, nil, nil)
-	router := NewRouter(handler)
+	handler := adapterhttp.NewTodoHandler(testLogger, nil, nil, nil, nil, gluc)
+	router := adapterhttp.NewRouter(handler)
 	mux := router.InitRoutes()
 
 	t.Run("Success", func(t *testing.T) {
@@ -275,8 +276,8 @@ func TestTH_Update(t *testing.T) {
 
 	uuc := usecase.NewUpdateTodoUC(store)
 	testLogger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
-	handler := NewTodoHandler(testLogger, nil, nil, nil, uuc, nil)
-	router := NewRouter(handler)
+	handler := adapterhttp.NewTodoHandler(testLogger, nil, nil, uuc, nil, nil)
+	router := adapterhttp.NewRouter(handler)
 	mux := router.InitRoutes()
 
 	t.Run("Success", func(t *testing.T) {
@@ -379,8 +380,8 @@ func TestTH_Delete(t *testing.T) {
 
 	duc := usecase.NewDeleteTodoUC(store)
 	testLogger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
-	handler := NewTodoHandler(testLogger, nil, nil, nil, nil, duc)
-	router := NewRouter(handler)
+	handler := adapterhttp.NewTodoHandler(testLogger, nil, nil, nil, duc, nil)
+	router := adapterhttp.NewRouter(handler)
 	mux := router.InitRoutes()
 
 	t.Run("Success", func(t *testing.T) {

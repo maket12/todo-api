@@ -1,4 +1,4 @@
-package usecase
+package usecase_test
 
 import (
 	"context"
@@ -7,12 +7,13 @@ import (
 	"todo-api/internal/adapter/out/storage"
 	"todo-api/internal/app/dto"
 	"todo-api/internal/app/uc_errors"
+	"todo-api/internal/app/usecase"
 	"todo-api/internal/domain/entity"
 )
 
 func TestGetTodoListUC(t *testing.T) {
 	store := storage.NewDataStorage()
-	uc := NewGetTodoListUC(store)
+	uc := usecase.NewGetTodoListUC(store)
 	ctx := context.Background()
 
 	t.Run("Success", func(t *testing.T) {
